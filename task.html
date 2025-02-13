@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager - Drag & Drop</title>
+    <style>
+        /* Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        /* General Page Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* Task Creation Form */
+        .task-creator {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .task-creator input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .task-creator button {
+            background: #ff5f6d;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .task-creator button:hover {
+            background: #ff3b4a;
+        }
+
+        /* Container for Columns */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 90%;
+            max-width: 1000px;
+            justify-content: center;
+        }
+
+        /* Task Columns */
+        .column {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: 0.3s;
+            min-height: 300px;
+            width: 30%;
+        }
+
+        .column h3 {
+            font-size: 18px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin: 0 0 10px;
+        }
+
+        /* Task Cards */
+        .task {
+            padding: 12px;
+            background: #ff5f6d;
+            color: white;
+            margin: 8px 0;
+            border-radius: 6px;
+            cursor: grab;
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            touch-action: none; /* Prevents scrolling while dragging */
+            user-select: none;
+        }
+
+        .task:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dragging Effects */
+        .task:active {
+            cursor: grabbing;
+            opacity: 0.6;
+        }
+
+        .column.drag-over {
+            background: #d1e7fd;
+            border: 2px dashed #ff5f6d;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .column {
+                width: 90%;
+            }
+            .task-creator {
+                flex-direction: column;
+                width: 100%;
+            }
+            .task-creator input {
+                width: 100%;
+            }
+            .task-creator button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Drag & Drop Task Manager</h1>
+
+    <!-- Task Creation Form -->
+    <div class="task-creator">
+        <input type="text" id="taskInput" placeholder="Enter new task...">
+        <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <div class="container">
+        <div class="column" id="todo">
+            <h3>📝 To Do</h3>
+        </div>
+        <div class="column" id="inprogress">
+            <h3>🚧 In Progress</h3>
+        </div>
+        <div class="column" id="done">
+            <h3>✅ Done</h3>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const columns = document.querySelectorAll(".column");
+
+            columns.forEach(column => {
+                column.addEventListener("dragover", function (event) {
+                    event.preventDefault();
+                    column.classList.add("drag-over");
+                });
+
+                column.addEventListener("dragleave", function () {
+                    column.classList.remove("drag-over");
+                });
+
+                column.addEventListener("drop", function (event) {
+                    event.preventDefault();
+                    const taskId = event.dataTransfer.getData("text/plain");
+                    const task = document.getElementById(taskId);
+                    if (task) {
+                        column.appendChild(task);
+                    }
+                    column.classList.remove("drag-over");
+                });
+            });
+        });
+
+        function addTask() {
+            let taskInput = document.getElementById("taskInput");
+            let taskText = taskInput.value.trim();
+
+            if (taskText === "") {
+                alert("Please enter a task!");
+                return;
+            }
+
+            let newTask = document.createElement("div");
+            newTask.classList.add("task");
+            newTask.textContent = taskText;
+            newTask.setAttribute("draggable", "true");
+            newTask.id = "task-" + new Date().getTime();
+
+            newTask.addEventListener("dragstart", function (event) {
+                event.dataTransfer.setData("text/plain", event.target.id);
+            });
+
+            // Enable touch-based dragging for mobile
+            newTask.addEventListener("touchstart", function (event) {
+                event.preventDefault();
+                const touch = event.touches[0];
+                newTask.style.position = "absolute";
+                newTask.style.zIndex = "1000";
+
+                function moveAt(pageX, pageY) {
+                    newTask.style.left = pageX - newTask.offsetWidth / 2 + "px";
+                    newTask.style.top = pageY - newTask.offsetHeight / 2 + "px";
+                }
+
+                moveAt(touch.pageX, touch.pageY);
+
+                function onTouchMove(event) {
+                    const touchMove = event.touches[0];
+                    moveAt(touchMove.pageX, touchMove.pageY);
+                }
+
+                document.addEventListener("touchmove", onTouchMove);
+
+                newTask.addEventListener("touchend", function () {
+                    document.removeEventListener("touchmove", onTouchMove);
+                    newTask.style.position = "static";
+                });
+            });
+
+            document.getElementById("todo").appendChild(newTask);
+            taskInput.value = "";
+        }
+    </script>
+
+</body>
+</html>
+
