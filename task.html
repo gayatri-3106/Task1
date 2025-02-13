@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager - Drag & Drop</title>
     <style>
-        /* Google Font */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-        /* General Page Styles */
+      
         body {
             font-family: 'Poppins', sans-serif;
             display: flex;
@@ -27,8 +25,7 @@
             margin-bottom: 15px;
             text-align: center;
         }
-
-        /* Task Creation Form */
+        
         .task-creator {
             background: white;
             padding: 12px;
@@ -66,7 +63,6 @@
             background: #ff3b4a;
         }
 
-        /* Container for Columns */
         .container {
             display: flex;
             flex-wrap: wrap;
@@ -76,7 +72,6 @@
             justify-content: center;
         }
 
-        /* Task Columns */
         .column {
             flex: 1;
             background: white;
@@ -97,7 +92,6 @@
             margin: 0 0 10px;
         }
 
-        /* Task Cards */
         .task {
             padding: 12px;
             background: #ff5f6d;
@@ -117,7 +111,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
-        /* Dragging Effects */
         .task:active {
             cursor: grabbing;
             opacity: 0.6;
@@ -128,7 +121,6 @@
             border: 2px dashed #ff5f6d;
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -154,7 +146,6 @@
 
     <h1>🚀 Drag & Drop Task Manager</h1>
 
-    <!-- Task Creation Form -->
     <div class="task-creator">
         <input type="text" id="taskInput" placeholder="Enter new task...">
         <button onclick="addTask()">Add Task</button>
@@ -216,8 +207,7 @@
             newTask.addEventListener("dragstart", function (event) {
                 event.dataTransfer.setData("text/plain", event.target.id);
             });
-
-            // Enable touch-based dragging for mobile
+            
             newTask.addEventListener("touchstart", function (event) {
                 event.preventDefault();
                 const touch = event.touches[0];
